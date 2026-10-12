@@ -28,10 +28,22 @@ runs:
 
     - name: Trivy filesystem
       if: ${{ !cancelled() }}
-      uses: aquasecurity/trivy-action@v0.36.0
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         scan-type: fs
         scan-ref: ${{ inputs.scan-path }}
         severity: ${{ inputs.severity }}
         ignore-unfixed: true
         exit-code: '1'
+
+    - name: Checkout for SonarCloud
+      if: ${{ !cancelled() }}
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    -  name: SonarCloud Scan
+       if: ${{ !cancelled() }}
+       uses: SonarSource/sonarqube-scan-action@v6
+       env:
+       SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
